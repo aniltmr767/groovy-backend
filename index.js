@@ -114,7 +114,7 @@ app.get('/', (req, res) => {
 })
 
 const DB_URL = "mongodb+srv://aniltmr:VPcmvCqQ8llsvwvD@cluster0.65ppr.mongodb.net/?retryWrites=true&w=majority"
-const PORT = 443
+const PORT = 5000
 
 mongoose.connect(DB_URL, { useNewUrlParser: true, useUnifiedTopology: true })
     .then(() => app.listen(PORT, "0.0.0.0", () => console.log(`Server running on port: ${PORT}`)))
