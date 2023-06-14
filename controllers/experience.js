@@ -52,13 +52,16 @@ export const updateExperienceById = async (req, res) => {
 }
 
 export const getExperiences = async (req, res) => {
-  const { page, limit, search } = req.query
+  const { page, limit, search = "" } = req.query
+  console.log("get experience")
+  const limit_ = search ? 1000 : limit
   try {
-    const LIMIT = Number(limit) || 8;
+    const LIMIT = Number(limit_) || 8;
     const startIndex = (Number(page)) * LIMIT; // get the starting index of every page
 
     const total = await ExperienceModel.countDocuments({});
-    const experiences = await ExperienceModel.find().sort({ _id: -1 }).limit(LIMIT).skip(startIndex);
+    const name_ = new RegExp(search, "i");
+    const experiences = await ExperienceModel.find({ $or: [{ name: name_ }] }).sort({ _id: -1 }).limit(LIMIT).skip(startIndex);
     res.json({ data: experiences, currentPage: Number(page || 1), total, numberOfPages: Math.ceil(total / LIMIT) });
   } catch (error) {
     res.status(500).json({ message: error.message });

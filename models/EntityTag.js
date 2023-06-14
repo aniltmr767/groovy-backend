@@ -2,8 +2,8 @@ import express from 'express'
 import mongoose from 'mongoose'
 
 const EntityTagSchema = mongoose.Schema({
-  tagId: [String],
-  entityId: [String],
+  tagId: String,
+  entityId: String,
   entityType: String,
   updatedAt: {
     type: Date,
