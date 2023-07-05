@@ -23,6 +23,7 @@ import profile from './routes/profile.js'
 import homepageLayout from './routes/homeLayout.js'
 import cities from "./routes/cities.js"
 import userQuery from "./routes/userQuery.js"
+import reviews from "./routes/reviews.js"
 import pdfTemplate from './documents/index.js'
 // import invoiceTemplate from './documents/invoice.js'
 import emailTemplate from './documents/email.js'
@@ -43,6 +44,7 @@ app.use('/tags', tagsRoutes)
 app.use('/experience', experience)
 app.use('/homeLayout', homepageLayout)
 app.use('/userQuery', userQuery)
+app.use('/reviews', reviews)
 
 // NODEMAILER TRANSPORT FOR SENDING INVOICE VIA EMAIL
 const transporter = nodemailer.createTransport({
@@ -114,10 +116,10 @@ app.get('/', (req, res) => {
 })
 
 const DB_URL = "mongodb+srv://aniltmr:VPcmvCqQ8llsvwvD@cluster0.65ppr.mongodb.net/?retryWrites=true&w=majority"
-const PORT = 443
+const PORT = 5000
 
 mongoose.connect(DB_URL, { useNewUrlParser: true, useUnifiedTopology: true })
-    .then(() => app.listen(PORT, "0.0.0.0", () => console.log(`Server running on port: ${PORT}`)))
+    .then(() => app.listen(PORT, () => console.log(`Server running on port: ${PORT}`)))
     .catch((error) => console.log(error.message))
 
 mongoose.set('useFindAndModify', false)

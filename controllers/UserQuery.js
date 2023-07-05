@@ -65,11 +65,13 @@ export const addNewUserQuery = async (req, res) => {
 
 
 export const getUserQueries = async (req, res) => {
-  const { page, search } = req.query
+  const { page, search, limit } = req.query
   try {
-    const LIMIT = 8;
-    const startIndex = (Number(page || 1) - 1) * LIMIT;
+    const LIMIT = Number(limit) || 8;
+    const startIndex = (Number(page || 0)) * LIMIT
+    console.log("startindex", startIndex)
     const total = await UserQueryModel.countDocuments({});
+    console.log("totla", total)
     const query = await UserQueryModel.aggregate([
       {
         $addFields: {
