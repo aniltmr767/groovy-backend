@@ -18,6 +18,77 @@ export const saveReview = async (req, res, next) => {
   }
 }
 
+export const getReviewsByExp = async (req, res) => {
+  const { id } = req.params
+  const { page, limit } = req.query
+  const limit_ = 8
+
+  try {
+    const LIMIT = Number(limit_) || 8;
+    const startIndex = (Number(page || 0)) * LIMIT; // get the starting index of every page
+    console.log("id ", id)
+    const rev = await ReviewModel.aggregate([
+      {
+        "$match": { expId: id }
+      },
+      {
+        '$addFields': {
+          'user': {
+            '$convert': {
+              'input': '$user',
+              'to': 'objectId'
+            }
+          },
+          'expId': {
+            '$convert': {
+              'input': '$expId',
+              'to': 'objectId'
+            }
+          }
+        }
+      }, {
+        '$lookup': {
+          'from': 'user_queries',
+          'localField': 'user',
+          'foreignField': '_id',
+          'as': 'user'
+        }
+      }, {
+        '$lookup': {
+          'from': 'experiences',
+          'localField': 'expId',
+          'foreignField': '_id',
+          'as': 'experience'
+        }
+      }, {
+        '$unwind': {
+          'path': '$user'
+        }
+      }, {
+        '$unwind': {
+          'path': '$experience'
+        }
+      }
+    ]).sort({ _id: -1 }).limit(LIMIT).skip(startIndex);
+
+
+    const avgRating = await ReviewModel.aggregate([
+      { $match: { expId: id } },
+      {
+        $group: {
+          "_id": null,
+          "avg": { "$avg": "$rating" },
+          "count": { $count: {} }
+        },
+
+      }
+    ])
+    res.json({ data: rev, avgRating: avgRating[0]?.avg, total: avgRating[0]?.count, currentPage: Number(page || 1) });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+}
+
 export const getAllReviews = async (req, res) => {
   const { page, limit } = req.query
   const limit_ = limit || 1000
